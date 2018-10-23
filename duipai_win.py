@@ -19,7 +19,7 @@ def init():
     spj = int(input("Enable special judge ( 1 -> YES , 0 -> NO) :"))
     switch = int(input("Enable timelimites ( 1 -> YES , 0 -> NO) :"))
     if switch:
-        tim = int(input("Please input the timelimits for the app (ms):")) / 1000
+        tim = float(input("Please input the timelimits for the app (ms):")) / 1000
     # print (path)
     return spj, name, tim, path, switch, cpp
 
@@ -131,7 +131,7 @@ while cnt < mx:
     # print (Time_C)
     if switch:
         print("Time for code_1 : %f " % A)
-        print("Time for code_2 : %f \r" % B)
+        print("Time for code_2 : %f \n" % B)
 
 
 if cnt == mx:
