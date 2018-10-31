@@ -1,69 +1,79 @@
-#include <cstdio>
-#include <queue>
-#include <cstring>
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
 using namespace std;
-struct Edge{int to,next,dis;}edge[1000100];
-const int mod=998244353;
-struct data{
-    int id,dist,str,ran;
-    bool operator <(const data &A) const
-    {
-        if (dist==A.dist)
-        {
-            if (str==A.str) return ran>A.ran;
-            return str>A.str;
-        }
-        return dist>A.dist;
-    }
-};
-int head[1000100],n,m,in[1000100],num,ans[1000100];
-int dis[1000100],pre[1000100],bes[1000100],rn[1000100],cnt;
-int read()
+const int maxn=100005;
+int n,ans[maxn],val[maxn];
+int head[maxn],to[2*maxn],nex[2*maxn],cnt=0;
+void add(int u,int v)
 {
-    int f=1,k=0;char c=getchar();
-    while(c<'0'||c>'9') c=='-'&&(f=-1),c=getchar();
-    while(c>='0'&&c<='9') k=k*10+c-'0',c=getchar();
-    return k*f;
+	nex[++cnt]=head[u];
+	to[cnt]=v;
+	head[u]=cnt;
 }
-void add(int u,int v,int w)
+int deep[maxn],find1[maxn][20];
+void dfs(int u,int fa)
 {
-    edge[++num].to=v;
-    edge[num].next=head[u];
-    edge[num].dis=w;
-    head[u]=num;
+	deep[u]=deep[fa]+1;
+	find1[u][0]=fa;
+	for(int i=1;(1<<i)<=deep[u];i++)
+	{
+		find1[u][i]=find1[find1[u][i-1]][i-1];
+	}
+	for(int i=head[u];i;i=nex[i])
+	{
+		if(to[i]!=fa) dfs(to[i],u);
+	}
 }
-int chen(int x,int y){return 1ll*x*y%mod;}
-void topo()
+int LCA(int a,int b)
 {
-    priority_queue<data> q;
-    for(int i=1;i<=n;i++) if (!in[i]) {q.push((data){i,0,0,0}); ans[i]=0;}
-    while(!q.empty())
-    {
-        int u=q.top().id; q.pop(); rn[u]=++cnt;
-        if (ans[u]==-1) ans[u]=chen(ans[bes[u]]+pre[u],29);
-        for(int i=head[u];i;i=edge[i].next)
-        {
-            int v=edge[i].to;
-            if ((dis[v]<dis[u]+1)||((dis[v]==dis[u]+1)&&((edge[i].dis<pre[v])||(edge[i].dis==pre[v]&&rn[bes[v]]>rn[u]))))
-            {
-                dis[v]=dis[u]+1; pre[v]=edge[i].dis; bes[v]=u;
-            }
-            in[v]--;
-            if (!in[v]) q.push((data){v,dis[v],pre[v],rn[bes[v]]});
-        }
-    }
+	if(deep[a]>deep[b]) swap(a,b);
+	for(int i=19;i>=0;i--)
+	{
+		if(deep[a]<=deep[b]-(1<<i)) b=find1[b][i];
+	}
+	if(a==b) return a;
+	for(int i=19;i>=0;i--)
+	{
+		if(find1[a][i]==find1[b][i]) continue;
+		a=find1[a][i]; b=find1[b][i];
+	}
+	return find1[a][0];
+}
+int getsum(int u,int fa)
+{
+	find1[u][0]=fa;
+	ans[u]=val[u]; 
+	for(int i=head[u];i;i=nex[i])
+	{
+		if(to[i]!=fa)
+		{
+			ans[u]+=getsum(to[i],u);
+		}
+	}
+	return ans[u];
 }
 int main()
 {
-    int x,y,w;
-    n=read(); m=read();
-    for(int i=1;i<=m;i++){x=read(); y=read(); w=read(); add(y,x,w); in[x]++;}
-    memset(ans,-1,sizeof(ans));
-    topo();
-    for(int i=1;i<=n;i++)
-    {
-        if (ans[i]==-1) printf("Infinity\n");
-        else printf("%d\n",ans[i]);
-    }
-    return 0;
+	// freopen("B.in","r",stdin);
+	// freopen("B.out","w",stdout);
+	scanf("%d",&n);
+	int u,v;
+	for(int i=1;i<=n-1;i++)
+	{
+		cin>>u>>v;
+		add(u,v); add(v,u);
+	}
+	dfs(1,0);
+	for(int i=1;i<=n/2;i++)
+	for(int j=i*2;j<=n;j+=i)
+	{
+		if( j%i==0 ) val[LCA(i,j)]++;
+	}
+	getsum(1,0);
+	for(int i=1;i<=n;i++)
+	{
+		printf("%d\n",ans[i]);
+	}
 }

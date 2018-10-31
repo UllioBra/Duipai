@@ -112,7 +112,7 @@ while cnt < mx:
     print("The %d \\ %d group" % (cnt, mx))
     if switch:
         A = Time_B-Time_A
-        B = Time_C-Time_B
+        B = Time_C-Time_B + 1
         if A > tim or B > tim:
             print("TLE")
             print("Time for code_1 : %f " % A)
