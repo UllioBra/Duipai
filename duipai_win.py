@@ -37,9 +37,11 @@ def Check_Make_Path(path):
 def compile_():
     os.system(".\\MinGW64\\bin\\g++ .\\pre\\code_1.cpp -o  .\\pre\\code_1.exe")
     os.system(".\\MinGW64\\bin\\g++ .\\pre\\code_2.cpp -o .\\pre\\code_2.exe")
+
     if spj:
         os.system(".\\MinGW64\\bin\\g++ .\\spj\\%s -o .\\spj\\%s" %
                   (spjname + '.cpp', spjname + '.exe'))
+                  
     if cpp:
         os.system(".\\MinGW64\\bin\\g++ .\\make\\cpp\\%s -o .\\make\\cpp\\%s" %
                   (name + '.cpp', name + '.exe'))
@@ -93,12 +95,14 @@ print("Test start :")
 
 
 while cnt < mx:
+
     if cpp:
         os.system(".\\make\\cpp\\%s > .\\file\\tmp.in" %
                   (name + '.exe'))
     else:
         os.system(".\\Python\\python.exe %s > .\\file\\tmp.in" %
                   ('.\\make\\python\\' + name + ".py"))
+    
     if switch:
         Time_A = time.time()
     os.system(".\\pre\\code_1.exe < .\\file\\tmp.in > .\\file\\code_1.out")
